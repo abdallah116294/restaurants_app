@@ -1,20 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:returants_app/screen/home_screen.dart';
+import 'package:returants_app/app/my_app.dart';
+import 'injection_container.dart' as di;
 
-void main() {
-  runApp( const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return const  MaterialApp(
-      title: 'Flutter Demo',
-       debugShowCheckedModeBanner: false,
-      home:  HomeScreen(),
-    );
-  }
+void main() async {
+  await di.init();
+  runApp(MyApp());
 }
