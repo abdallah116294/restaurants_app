@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:returants_app/core/api/api_consumer.dart';
 import 'package:returants_app/core/api/api_endpoints.dart';
 import 'package:returants_app/core/api/app_interceptors.dart';
 import 'package:returants_app/core/api/status_code.dart';
 import 'package:returants_app/core/error/exception.dart';
+import 'package:returants_app/injection_container.dart' as di;
 
 class DioConsumer implements ApiConsumer {
   final Dio client;
@@ -15,7 +17,10 @@ class DioConsumer implements ApiConsumer {
       ..validateStatus = (status) {
         return status! < StatusCode.internalServerError;
       };
-    client.interceptors.add(AppInterceptors());
+    client.interceptors.add(di.sl<AppInterceptors>());
+    if (kDebugMode) {
+      client.interceptors.add(di.sl<LogInterceptor>());
+    }
   }
   @override
   Future gt(String pathe, {Map<String, dynamic>? queryParametes}) async {
