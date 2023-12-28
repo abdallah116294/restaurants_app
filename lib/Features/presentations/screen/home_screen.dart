@@ -1,58 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:returants_app/Features/presentations/cubit/get_restaurants_cubit.dart';
+import 'package:returants_app/Features/presentations/screen/search_screen.dart';
 import 'package:returants_app/Features/presentations/widgets/restaurants_widget.dart';
 import 'package:returants_app/injection_container.dart' as di;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
   final _searchController = TextEditingController();
+  final _controller = ScrollController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>const SearchScreen()));
+                },
+                icon: const Icon(Icons.search))
+          ],
           backgroundColor: Theme.of(context).primaryColor,
           leading: IconButton(
               icon: const Icon(Icons.account_circle), onPressed: () {}),
           title: const Text("Food Delivery App"),
         ),
-        body: ListView(
+        body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                    fillColor: Colors.white,
-                    filled: true,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(width: .8)),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(
-                            width: .8, color: Theme.of(context).primaryColor)),
-                    hintText: "Search Restaurants",
-                    prefixIcon: const Icon(
-                      Icons.search,
-                      size: 30,
-                    ),
-                    suffixIcon: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _searchController.clear();
-                          });
-                        },
-                        icon: const Icon(Icons.clear))),
-              ),
-            ),
             BlocProvider(
               create: (context) =>
                   di.sl<GetRestaurantsCubit>()..getRestaurants(),
@@ -63,36 +42,43 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: CircularProgressIndicator(),
                   );
                 } else if (state is GetRestaurantsLoadedState) {
-                  return Container(
+                  return Expanded(
                     child: ListView.separated(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
+                        controller: _controller,
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
                         itemBuilder: (context, index) {
                           return RestaurantsWidget(
-                              restaurant_name: state
-                                  .restaurantDataEntity.restaurants![index].name
-                                  .toString(),
-                              restaurant_city: state
-                                  .restaurantDataEntity.restaurants![index].city
-                                  .toString(),
-                              imageUrl: state.restaurantDataEntity
-                                  .restaurants![index].pictureId
-                                  .toString(), restaurant_rating: state.restaurantDataEntity.restaurants![index].rating!.toInt(),);
+                            id: state
+                                .restaurantDataEntity.restaurants![index].id
+                                .toString(),
+                            restaurant_name: state
+                                .restaurantDataEntity.restaurants![index].name
+                                .toString(),
+                            restaurant_city: state
+                                .restaurantDataEntity.restaurants![index].city
+                                .toString(),
+                            imageUrl: state.restaurantDataEntity
+                                .restaurants![index].pictureId!
+                                .toString(),
+                            restaurant_rating: state.restaurantDataEntity
+                                .restaurants![index].rating!
+                                .toDouble(),
+                          );
                         },
                         separatorBuilder: (context, index) => const Divider(),
                         itemCount:
                             state.restaurantDataEntity.restaurants!.length),
                   );
-                }else if(state is GetRestaurantsErrorState){
-                  return const  Center(
-                    child: CircularProgressIndicator(),
+                } else if (state is GetRestaurantsErrorState) {
+                  return Center(
+                    child: Text(state.error.toString()),
                   );
                 }
-              return  const  Center(
-                    child: CircularProgressIndicator(),
-                  );
-              }
-              ),
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }),
             )
           ],
         ));

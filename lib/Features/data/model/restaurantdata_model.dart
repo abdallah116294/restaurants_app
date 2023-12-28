@@ -5,10 +5,11 @@ class RestaurantDataModel extends RestaurantDataEntity {
   RestaurantDataModel(
       {required super.error,
       required super.message,
-      required super.restaurants});
+      required super.restaurants, required super.count});
   factory RestaurantDataModel.formJson(Map<String, dynamic> json) {
     List<RestaurantsModel> restaurants=(json["restaurants"] as List).map((e) => RestaurantsModel.fromJson(e)).toList();
     return RestaurantDataModel(
+       count: json['count'],
         error: json['error'],
         message: json['message'],
         restaurants: restaurants);

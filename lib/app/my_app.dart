@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:returants_app/Features/presentations/cubit/get_restaurants_cubit.dart';
 import 'package:returants_app/Features/presentations/screen/home_screen.dart';
+import 'package:returants_app/Features/presentations/screen/splash_screen.dart';
 import 'package:returants_app/injection_container.dart'as di;
 
 class MyApp extends StatefulWidget {
@@ -26,7 +27,7 @@ class _MyAppState extends State<MyApp> {
      scaffoldBackgroundColor: Colors.grey[50],
      primaryColor: Colors.deepOrangeAccent
       ),
-      home:const  HomeScreen(),
+      home:const  SplashScreen(),
     ) );
   }
 }

@@ -6,7 +6,7 @@ class Restaurants extends Equatable {
   String? description;
   String? pictureId;
   String? city;
-  double? rating;
+  dynamic? rating;
   Restaurants(
       {required this.id,
       required this.name,
